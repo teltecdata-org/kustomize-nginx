@@ -2,7 +2,7 @@ apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
 namePrefix: prod-
-namespace: ${APP_NAME}
+namespace: prod-${APP_NAME}
 
 resources:
   - ../../base
@@ -17,6 +17,20 @@ patches:
       name: nginx
   - patch: |-
       - op: replace
+        path: /metadata/name
+        value: ${APP_NAME}
+    target:
+      kind: Deployment
+      name: nginx
+  - patch: |-
+      - op: replace
+        path: /metadata/name
+        value: ${APP_NAME}
+    target:
+      kind: Service
+      name: nginx
+  - patch: |-
+      - op: replace
         path: /spec/template/spec/containers/0/resources/limits/cpu
         value: "500m"
       - op: replace
@@ -28,10 +42,10 @@ patches:
   - patch: |-
       - op: replace
         path: /metadata/name
-        value: ${APP_NAME}
+        value: prod-${APP_NAME}
       - op: replace
         path: /metadata/labels/name
-        value: ${APP_NAME}
+        value: prod-${APP_NAME}
     target:
       kind: Namespace
       name: default
